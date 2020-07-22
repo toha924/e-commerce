@@ -1,18 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
+import { Switch, Route } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import Head from './head'
+import Header from './header'
+import Cards from './cards'
+import Cart from './cart'
+import Logs from './logs'
+
+import { getProducts } from '../redux/reducers/products'
+
 // import wave from '../assets/images/wave.jpg'
 
 const Home = () => {
-  const [counter, setCounterNew] = useState(0)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getProducts())
+  }, [])
 
   return (
     <div>
       <Head title="Hello" />
-      <img alt="wave" src="images/wave.jpg" />
-      <button type="button" onClick={() => setCounterNew(counter + 1)}>
-        updateCounter
-      </button>
-      <div> Hello World Dashboard {counter} </div>
+      <Header />
+      <Switch>
+        <Route exact path="/" component={() => <Cards />} />
+        <Route exact path="/basket" component={() => <Cart />} />
+        <Route exact path="/logs" component={() => <Logs />} />
+      </Switch>
     </div>
   )
 }

@@ -5,11 +5,22 @@ import bodyParser from 'body-parser'
 import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
-
+import axios from 'axios'
 import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
+
+const { readFile, writeFile } = require('fs').promises
+const data = require('./data')
+
+const saveLogs = async () => {
+  return writeFile(`${__dirname}/logs.json`, JSON.stringify(), { encoding: 'utf8' })
+}
+const readLogs = async () => {
+  return readFile(`${__dirname}/logs.json`, { encoding: 'utf8' })
+  .then(logs => JSON.parse(logs))
+}
 const Root = () => ''
 
 try {
@@ -40,6 +51,29 @@ const middleware = [
 ]
 
 middleware.forEach((it) => server.use(it))
+
+server.post('/api/v1/logs', async (req) => {
+  const logs = await readLogs()
+  console.log(req.body)
+  const newLog = req.body
+  await saveLogs([...logs, newLog])
+  //  res.json(req.body)
+})
+server.get('/api/v1/logs', async (req, res) => {
+  const logs = await readLogs()
+  res.set('x-skillcrucial-user', '7e61eef1-dc58-44ce-9901-3871cce40541')
+  console.log(req.body)
+  res.json(logs)
+})
+
+server.get('/api/v1/products', (req, res) => {
+  res.json(data.slice(0, 10))
+})
+
+server.get('/api/v1/rates', async (req, res) => {
+  const { data: rates } = await axios('https://api.exchangeratesapi.io/latest?symbols=USD,CAD')
+  res.json(rates)
+})
 
 server.use('/api/', (req, res) => {
   res.status(404)
