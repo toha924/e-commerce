@@ -10,16 +10,15 @@ import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
-
-const { readFile, writeFile } = require('fs').promises
+const { readFile, appendFile } = require('fs').promises
 const data = require('./data')
 
 const saveLogs = async () => {
-  return writeFile(`${__dirname}/logs.json`, JSON.stringify(), { encoding: 'utf8' })
+  return appendFile(`${__dirname}/logs.json`, JSON.stringify(data), { encoding: 'utf8' })
 }
 const readLogs = async () => {
   return readFile(`${__dirname}/logs.json`, { encoding: 'utf8' })
-  .then(logs => JSON.parse(logs))
+  .then(logs => JSON.parse(logs).catch(err => console.log(err)))
 }
 const Root = () => ''
 
@@ -53,11 +52,10 @@ const middleware = [
 middleware.forEach((it) => server.use(it))
 
 server.post('/api/v1/logs', async (req) => {
-  const logs = await readLogs()
-  console.log(req.body)
+  console.log('log has arived')
   const newLog = req.body
-  await saveLogs([...logs, newLog])
-  //  res.json(req.body)
+  await saveLogs( newLog)
+  // res.json(logs)
 })
 server.get('/api/v1/logs', async (req, res) => {
   const logs = await readLogs()

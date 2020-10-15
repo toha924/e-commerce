@@ -23,7 +23,7 @@ const Home = () => {
       <Header />
       <Switch>
         <Route exact path="/" component={() => <Cards />} />
-        <Route exact path="/basket" component={() => <Cart />} />
+        <Route exact path="/cart" component={() => <Cart />} />
         <Route exact path="/logs" component={() => <Logs />} />
       </Switch>
     </div>

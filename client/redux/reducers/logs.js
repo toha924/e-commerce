@@ -10,7 +10,9 @@ export default (state = initialState, action) => {
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify(action)
+      console.log(action)
     })
+    console.log(action)
   }
   return {
     ...state,
